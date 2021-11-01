@@ -9,7 +9,7 @@ class Config(object):
     SECRET_KEY = 'GLSDGL12359SDLF'
 
     # 数据库
-    SQLALCHEMY_DATABASE_URI = "mysql://root:mysql@127.0.0.1:3306/iHome"
+    SQLALCHEMY_DATABASE_URI = "mysql://root:123456@127.0.0.1:3306/iHome"
     SQLALCHEMY_TRACK_MODIFICATIONS = True
 
     # redis
