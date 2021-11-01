@@ -11,6 +11,8 @@ from logging.handlers import RotatingFileHandler
 import redis
 import logging
 from pymysql import install_as_MySQLdb
+from ihome.utils.commons import ReConverter
+from . import web_html
 
 install_as_MySQLdb()
 
@@ -55,8 +57,13 @@ def create_app(config_name):
     # 为全局的日志工具对象(flask app使用的)添加日志记录器
     logging.getLogger().addHandler(file_log_handler)
 
+    # 为flak添加自定义的转换器
+    app.url_map.converters['re'] = ReConverter
+
     # 注册蓝图
     from ihome import api_1_0
     app.register_blueprint(api_1_0.api, url_prefix='/api/v1.0')
+    # 注册提供静态文件的蓝图
+    app.register_blueprint(web_html.html)
 
     return app
