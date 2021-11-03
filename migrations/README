@@ -1,1 +1,6 @@
 Generic single-database configuration.
+
+问题一：图片无法显示
+答：因为ImageFile.py使用python2写的，所以要在captcha这个py文件下改成
+    from io import BytesIO,然后将out = StringIO()改成out = BytesIO()
+    https://blog.csdn.net/DCclient/article/details/102872494
