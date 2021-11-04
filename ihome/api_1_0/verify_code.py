@@ -76,6 +76,16 @@ def get_sms_code(mobile):
     if real_image_code.lower() != image_code.lower():
         return jsonify(errno=RET.DATAERR, errmsg='图片验证码错误')
 
+    # 判断手机号是否60s内有发送过短信，如果60s内有发送短信记录，则不再发送短信，反之发送
+    try:
+        send_flag = redis_store.get('send_sms_code_%s' % mobile)
+    except Exception as e:
+        current_app.logger.error(e)
+    else:
+        # 如果没报错则，在60s内发送过，即不需要在发送短信
+        if send_flag is not None:
+            return jsonify(errno=RET.REQERR, errmsg='请求频繁，请稍后再试')
+
     # 判断手机号是否存在
     try:
         user = User.query.filter_by(mobile=mobile).first()
@@ -86,17 +96,19 @@ def get_sms_code(mobile):
             # 表示手机号存在
             return jsonify(errno=RET.DATAEXIST, errmsg='手机号已存在')
 
-    # 如果手机号不存在则发送验证码
+    # 如果手机号不存在则发送验 证码
     sms_code = '%06d' % random.randint(0, 999999)
     # 保存真实的短信验证码
     try:
         redis_store.setex('sms_code_%s' % mobile, constants.SMS_CODE_REDIS_EXPIRES, sms_code)
+        # 给发送验证码的手机做个记录，防止60s内多次发送验证码
+        redis_store.setex('send_sms_code_%s' % mobile, constants.SEND_SMS_CODE_INTERVAL, 1)
     except Exception as e:
         current_app.logger.error(e)
         return jsonify(errno=RET.DBERR, errmsg='保存短信失败')
 
     # 发送短信
-    info = (sms_code, constants.SMS_CODE_REDIS_EXPIRES)
+    info = (sms_code, constants.SMS_CODE_REDIS_EXPIRES / 60)
     try:
         ccp = CCP()
         result = ccp.send_template_sms('1', '15622804472', info)
