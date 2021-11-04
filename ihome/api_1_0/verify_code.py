@@ -58,7 +58,9 @@ def get_sms_code(mobile):
     # 业务逻辑处理
     # 从redis中取出真实的图片验证码
     try:
-        real_image_code = redis_store.get('image_code_%s' % image_code_id).decode('utf-8')
+        real_image_code = redis_store.get('image_code_%s' % image_code_id)
+        if real_image_code is not None:
+            real_image_code = real_image_code.decode('utf-8')
     except Exception as e:
         current_app.logger.error(e)
         return jsonify(errno=RET.DBERR, errmsg='redis数据库异常')
@@ -66,6 +68,9 @@ def get_sms_code(mobile):
     # 判断验证码是否过期
     if real_image_code is None:
         return jsonify(errno=RET.NODATA, errmsg='图片验证码失效')
+
+    # 删除图片验证码,防止用户使用同一个验证码使用多次
+    redis_store.delete('image_code_%s' % image_code_id)
 
     # 图片验证码比较
     if real_image_code.lower() != image_code.lower():
