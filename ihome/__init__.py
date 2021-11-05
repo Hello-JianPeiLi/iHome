@@ -44,7 +44,7 @@ def create_app(config_name):
     Session(app)
 
     # 为flask补充csrf防护
-    # CSRFProtect(app)
+    CSRFProtect(app)
 
     # 设置日志等级
     logging.basicConfig(level=logging.INFO)  # 调式debug等级
