@@ -19,7 +19,7 @@ function generateUUID() {
 }
 
 function generateImageCode() {
-    let imageCodeId = generateUUID()
+    imageCodeId = generateUUID()
     console.log(imageCodeId);
     let url = '/api/v1.0/image_codes/' + imageCodeId
     console.log(url);
@@ -42,7 +42,8 @@ function sendSMSCode() {
         $(".phonecode-a").attr("onclick", "sendSMSCode();");
         return;
     }
-    $.get("/api/smscode", {mobile: mobile, code: imageCode, codeId: imageCodeId},
+    console.log(imageCodeId);
+    $.get("/api/v1.0/sms_codes/" + mobile, {image_code: imageCode, image_code_id: imageCodeId},
         function (data) {
             if (0 != data.errno) {
                 $("#image-code-err span").html(data.errmsg);

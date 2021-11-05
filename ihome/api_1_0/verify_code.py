@@ -108,10 +108,10 @@ def get_sms_code(mobile):
         return jsonify(errno=RET.DBERR, errmsg='保存短信失败')
 
     # 发送短信
-    info = (sms_code, constants.SMS_CODE_REDIS_EXPIRES / 60)
+    info = (sms_code, int(constants.SMS_CODE_REDIS_EXPIRES / 60))
     try:
         ccp = CCP()
-        result = ccp.send_template_sms('1', '15622804472', info)
+        result = ccp.send_template_sms('1', mobile, info)
     except Exception as e:
         current_app.logger.error(e)
         return jsonify(errno=RET.THIRDERR, errmsg='发送异常')

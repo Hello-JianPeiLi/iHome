@@ -26,6 +26,7 @@ class CCP(object):
                      '8aaf07087ce03b67017ce47d439b008a')
         resp = json.loads(sdk.sendMessage(tid, mobile, datas))
         if resp['statusCode'] == '000000':
+            print(resp)
             return 0
         else:
             return -1
@@ -123,3 +124,9 @@ class SmsSDK:
         # print('Request url: ', url)
         # print('Request headers: ', headers)
         # print('Request body: ', body)
+
+
+if __name__ == '__main__':
+    ccp = CCP()
+    info = ('1', '2df')
+    ccp.send_template_sms('1', '13620228033', info)
