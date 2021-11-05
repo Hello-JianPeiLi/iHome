@@ -112,5 +112,27 @@ $(document).ready(function () {
             $("#password2-err").show();
             return;
         }
+
+        // 调用ajax向后端发送注册请求
+        var req_data = {
+            mobile: mobile,
+            sms_code: phoneCode,
+            password: passwd,
+            password2: passwd2,
+        };
+        var req_json = JSON.stringify(req_data);
+        $.ajax({
+            url: "/api/v1.0/users",
+            type: 'post',
+            data: req_json,
+            contentType: 'application/json',
+            dataType: 'json',
+            success: function (resp) {
+                if (resp.errno == "0") {
+                    location.href = '/index.html'
+                }
+            }
+        });
+
     });
 })
