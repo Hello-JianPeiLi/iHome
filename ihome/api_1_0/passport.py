@@ -152,11 +152,27 @@ def login():
     return jsonify(errno=RET.OK, errmsg='登录成功')
 
 
-# POST /api/v1.0/logout
-@api.route('/logout')
+@api.route('/sessions', methods=['GET'])
+def check_login():
+    """
+    获取登录状态
+    :return:
+    """
+    # 从session中获取用户名字
+    name = session.get('name')
+    # 如果session中数据name名字存在，则表示已登录，否则未登录
+    if name is not None:
+        return jsonify(errno=RET.OK, errmsg='true', data={"name": name})
+    else:
+        return jsonify(errno=RET.SESSIONERR, errmsg='false')
+
+
+# POST /api/v1.0/sessions
+@api.route('/sessions', methods=['DELETE'])
 def logout():
     """
     登出
     :return:
     """
-    pass
+    session.clear()
+    return jsonify(erron=RET.OK, errmsg='OK')
