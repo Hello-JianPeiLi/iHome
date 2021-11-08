@@ -5,7 +5,7 @@
 
 from datetime import datetime
 from . import db
-from werkzeug.security import generate_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash
 
 
 class BaseModel(object):
@@ -53,12 +53,18 @@ class User(BaseModel, db.Model):
     #     """对密码进行加密"""
     #     self.password_hash = generate_password_hash(origin_password)
 
+    def check_password(self, password: str) -> bool:
+        """
+        检查密码是否正确
+        :param password:
+        :return: 正确返回 True,反之False
+        """
+        return check_password_hash(self.password_hash, password)
+
 
 class Area(BaseModel, db.Model):
     """城区"""
-
     __tablename__ = "ih_area_info"
-
     id = db.Column(db.Integer, primary_key=True)  # 区域编号
     name = db.Column(db.String(32), nullable=False)  # 区域名字
     houses = db.relationship("House", backref="area")  # 区域的房屋
@@ -74,9 +80,7 @@ house_facility = db.Table(
 
 class House(BaseModel, db.Model):
     """房屋信息"""
-
     __tablename__ = "ih_house_info"
-
     id = db.Column(db.Integer, primary_key=True)  # 房屋编号
     user_id = db.Column(db.Integer, db.ForeignKey("ih_user_profile.id"), nullable=False)  # 房屋主人的用户编号
     area_id = db.Column(db.Integer, db.ForeignKey("ih_area_info.id"), nullable=False)  # 归属地的区域编号
@@ -100,18 +104,14 @@ class House(BaseModel, db.Model):
 
 class Facility(BaseModel, db.Model):
     """设施信息"""
-
     __tablename__ = "ih_facility_info"
-
     id = db.Column(db.Integer, primary_key=True)  # 设施编号
     name = db.Column(db.String(32), nullable=False)  # 设施名字
 
 
 class HouseImage(BaseModel, db.Model):
     """房屋图片"""
-
     __tablename__ = "ih_house_image"
-
     id = db.Column(db.Integer, primary_key=True)
     house_id = db.Column(db.Integer, db.ForeignKey("ih_house_info.id"), nullable=False)  # 房屋编号
     url = db.Column(db.String(256), nullable=False)  # 图片的路径
@@ -119,9 +119,7 @@ class HouseImage(BaseModel, db.Model):
 
 class Order(BaseModel, db.Model):
     """订单"""
-
     __tablename__ = "ih_order_info"
-
     id = db.Column(db.Integer, primary_key=True)  # 订单编号
     user_id = db.Column(db.Integer, db.ForeignKey("ih_user_profile.id"), nullable=False)  # 下订单的用户编号
     house_id = db.Column(db.Integer, db.ForeignKey("ih_house_info.id"), nullable=False)  # 预订的房间编号
