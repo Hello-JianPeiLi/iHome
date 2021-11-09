@@ -84,10 +84,13 @@ $(document).ready(function () {
         var date = $(this).datepicker("getFormattedDate");
         $("#start-date-input").val(date);
     });
-    $.ajax('/api/v1.0/sessions', 'get', function (resp) {
+    $.get('/api/v1.0/sessions', function (resp) {
         console.log(resp);
+        console.log(resp.data.name);
         if (resp.errno == '0') {
-            $('.user-name').attr('href', 'sdlfkj')
+            $('.register-login').css('display', 'none');
+            $('.user-name').html(resp.data.name);
+            $('.user-info').show();
         }
     })
 })
