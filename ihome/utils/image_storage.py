@@ -29,7 +29,7 @@ def storage(file_data):
     # localfile = './sync/bbb.jpg'
 
     ret, info = put_data(token, None, file_data)
-    if info.staus_code == 200:
+    if info.status_code == 200:
         return ret.get('key')
     else:
         raise Exception('上传七牛失败')
@@ -38,4 +38,4 @@ def storage(file_data):
 if __name__ == '__main__':
     with open('./wallhaven-rdj8jj.jpg', 'rb') as f:
         content = f.read()
-        storage(content)
+        print(storage(content))

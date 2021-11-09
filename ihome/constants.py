@@ -12,3 +12,5 @@ SEND_SMS_CODE_INTERVAL = 60
 LOGIN_ERROR_MAX_TIMES = 5
 # 登录错误超过次数后，限制登录时间，单位秒
 LOGIN_ERROR_FORBID_TIME = 300
+# 七牛对象存储域名
+QINIU_URL_DOMAIN = 'http://r2am6p7w9.hn-bkt.clouddn.com/'
