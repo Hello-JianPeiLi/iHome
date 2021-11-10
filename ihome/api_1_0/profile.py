@@ -90,4 +90,51 @@ def get_user_profile():
 
     return jsonify(errno=RET.OK, errmsg='查询成功', data=user.to_dict())
 
-#
+
+# GET /api/v1.0/users/auth
+@api.route('/users/auth', methods=['GET'])
+@login_required
+def get_user_auth():
+    """获取用户的实名认证信息"""
+    user_id = g.user_id
+    current_app.logger.info(user_id)
+    # 在数据库中查询信息
+    try:
+        user = User.query.get(user_id)
+    except Exception as e:
+        current_app.logger.error(e)
+        return jsonify(errno=RET.DBERR, errmsg='获取用户实名信息失败')
+
+    if user is None:
+        return jsonify(errno=RET.NODATA, errmsg='无效操作')
+
+    return jsonify(errno=RET.OK, errmsg='获取实名认证信息成功', data=user.auth_to_dict())
+
+
+# PUT /api/v1.0/users/auth
+@api.route('/users/auth', methods=['PATCH'])
+@login_required
+def set_user_auth():
+    user_id = g.user_id
+    req_data = request.get_json()
+    if not req_data:
+        return jsonify(errno=RET.PARAMERR, errmsg='参数错误')
+
+    real_name = req_data.get('real_name')
+    id_card = req_data.get('id_card')
+    if not all([real_name, id_card]):
+        return jsonify(errno=RET.PARAMERR, errmsg='参数错误')
+
+    try:
+        user = User.query.filter_by(id=user_id, real_name=None, id_card=None).update(
+            {'real_name': real_name, 'id_card': id_card})
+        current_app.logger.info(user)
+        db.session.commit()
+    except Exception as e:
+        current_app.logger.error(e)
+        db.session.rollback()
+        return jsonify(errno=RET.DBERR, errmsg='保存实名信息失败')
+    if not user:
+        return jsonify(errno=RET.DATAEXIST, errmsg='已实名，请勿重复实名')
+
+    return jsonify(errno=RET.OK, errmsg='实名认证成功')

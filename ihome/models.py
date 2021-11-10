@@ -63,14 +63,24 @@ class User(BaseModel, db.Model):
         return check_password_hash(self.password_hash, password)
 
     def to_dict(self):
-        d = {
+        """将需要的用户信息转成字典返回出去"""
+        user_info = {
             'user_id': self.id,
             'name': self.name,
             'mobile': self.mobile,
             'avatar': constants.QINIU_URL_DOMAIN + self.avatar_url if self.avatar_url else '',
             'create_time': self.create_time.strftime('%Y-%m-%d %H:%m:%S')
         }
-        return d
+        return user_info
+
+    def auth_to_dict(self):
+        """将需要的实名信息转成字典返回出去"""
+        auth_dict = {
+            'user_id': self.id,
+            'real_name': self.real_name,
+            'id_card': self.id_card
+        }
+        return auth_dict
 
 
 class Area(BaseModel, db.Model):
