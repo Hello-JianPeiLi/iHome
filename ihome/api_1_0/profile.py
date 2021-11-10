@@ -30,6 +30,7 @@ def set_user_avatar():
     # 调用七牛上传图片
     try:
         file_name = storage(image_data)
+        current_app.logger.info('file_name=========', file_name)
     except Exception as e:
         current_app.logger.error(e)
         return jsonify(errno=RET.THIRDERR, errmsg='上传图片失败')
@@ -44,8 +45,9 @@ def set_user_avatar():
         return jsonify(errno=RET.DBERR, errmsg='保存图片信息失败')
 
     # 保存成功返回
-    avatar_url = constants.QINIU_URL_DOMAIN + file_name
-    return jsonify(errno=RET.OK, errmsg='保存成功', data={'avatar_url': avatar_url})
+    # 在storage中已经拼接生成授权的url了
+    # avatar_url = constants.QINIU_URL_DOMAIN + file_name
+    return jsonify(errno=RET.OK, errmsg='保存成功', data={'avatar_url': file_name})
 
 
 # PUT /api/v1.0/users/name
@@ -54,9 +56,10 @@ def set_user_avatar():
 def change_user_name():
     """修改用户名"""
     user_id = g.user_id
-
+    current_app.logger.info(user_id)
     # 获取用户想要设置的用户名
     req_data = request.get_json()
+    current_app.logger.info(req_data)
     if not req_data:
         return jsonify(errno=RET.PARAMERR, errmsg='参数不完整')
 
@@ -70,7 +73,7 @@ def change_user_name():
         return jsonify(errno=RET.DBERR, errmsg='设置昵称失败')
 
     session['name'] = name
-    return jsonify(errno=RET.OK, merrmsg='修改成功', data={'name': name})
+    return jsonify(errno=RET.OK, errmsg='修改成功', data={'name': name})
 
 
 # GET /api/v1.0/user

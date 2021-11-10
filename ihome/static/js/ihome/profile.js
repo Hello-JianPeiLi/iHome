@@ -32,5 +32,41 @@ $(document).ready(function () {
                 }
             }
         })
+    });
+    $('#form-name').submit(function (e) {
+        // 阻止表单默认提交行为
+        e.preventDefault();
+        let name = $('#user-name').val();
+        var req_data = {name: name};
+        var req_json = JSON.stringify(req_data);
+        $.ajax({
+            url: '/api/v1.0/users/name',
+            type: 'put',
+            data: req_json,
+            dataType: 'json',
+            contentType: 'application/json',
+            headers: {'X-CSRFToken': getCookie('csrf_token')},
+            success: function (resp) {
+                if (resp.errno == '0') {
+                    let ret = resp.errmsg;
+                    console.log(ret);
+                } else {
+                    alert('修改失败');
+                }
+            }
+        })
     })
+    $.ajax({
+        url: '/api/v1.0/user',
+        type: 'get',
+        dataType: 'json',
+        success: function (resp) {
+            console.log(resp.data.name);
+            if (resp.errno == '0') {
+                ;
+                $('#user-name').val(resp.data.name);
+                $('#user-avatar').attr('src', resp.data.avatar);
+            }
+        }
+    });
 })

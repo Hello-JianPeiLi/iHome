@@ -6,6 +6,7 @@
 
 from qiniu import Auth, put_data, etag
 import qiniu.config
+from ihome import constants
 
 # 需要填写你的 Access Key 和 Secret Key
 access_key = 'pVS6NiVZgz91sa5QMal9qsmzm37l_FFiqLV6R-uF'
@@ -30,7 +31,12 @@ def storage(file_data):
 
     ret, info = put_data(token, None, file_data)
     if info.status_code == 200:
-        return ret.get('key')
+        image_resource = ret.get('key')
+        # 需要解析的url
+        analysis_url = constants.QINIU_URL_DOMAIN + image_resource
+        # 调用private_download_url鉴权url,生成访问许可的url
+        auth_image_url = q.private_download_url(analysis_url)
+        return auth_image_url
     else:
         raise Exception('上传七牛失败')
 

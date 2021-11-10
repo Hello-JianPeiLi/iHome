@@ -27,7 +27,7 @@ class User(BaseModel, db.Model):
     mobile = db.Column(db.String(11), unique=True, nullable=False)  # 手机号
     real_name = db.Column(db.String(32))  # 真实姓名
     id_card = db.Column(db.String(20))  # 身份证号
-    avatar_url = db.Column(db.String(128))  # 用户头像路径
+    avatar_url = db.Column(db.String(512))  # 用户头像路径
     houses = db.relationship("House", backref="user")  # 用户发布的房屋
     orders = db.relationship("Order", backref="user")  # 用户下的订单
 
