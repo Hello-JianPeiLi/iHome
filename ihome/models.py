@@ -68,7 +68,9 @@ class User(BaseModel, db.Model):
             'user_id': self.id,
             'name': self.name,
             'mobile': self.mobile,
-            'avatar': constants.QINIU_URL_DOMAIN + self.avatar_url if self.avatar_url else '',
+            # 'avatar': constants.QINIU_URL_DOMAIN + self.avatar_url if self.avatar_url else '',
+            # 因为在storage中做了鉴权处理，所以不用拼接了
+            'avatar': self.avatar_url if self.avatar_url else '',
             'create_time': self.create_time.strftime('%Y-%m-%d %H:%m:%S')
         }
         return user_info

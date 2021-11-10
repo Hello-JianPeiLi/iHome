@@ -15,4 +15,16 @@ function logout() {
 }
 
 $(document).ready(function () {
+    $.ajax({
+        url: '/api/v1.0/user',
+        type: 'get',
+        dataType: 'json',
+        success: function (resp) {
+            if (resp.errno == '0') {
+                $('#user-name').html(resp.data.name);
+                $('#user-mobile').html(resp.data.mobile);
+
+            }
+        }
+    })
 })

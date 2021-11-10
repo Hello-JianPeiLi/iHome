@@ -30,7 +30,6 @@ def set_user_avatar():
     # 调用七牛上传图片
     try:
         file_name = storage(image_data)
-        current_app.logger.info('file_name=========', file_name)
     except Exception as e:
         current_app.logger.error(e)
         return jsonify(errno=RET.THIRDERR, errmsg='上传图片失败')
