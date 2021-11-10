@@ -92,5 +92,5 @@ $(document).ready(function () {
             $('.user-name').html(resp.data.name);
             $('.user-info').show();
         }
-    })
+    });
 })
