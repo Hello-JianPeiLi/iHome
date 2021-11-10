@@ -3,7 +3,7 @@
 # @Time : 2021/11/09 15:27
 
 from . import api
-from flask import g, request, jsonify, current_app
+from flask import g, request, jsonify, current_app, session
 from ihome.utils.response_code import RET
 from ihome.utils.image_storage import storage
 from ihome.models import User
@@ -46,3 +46,48 @@ def set_user_avatar():
     # 保存成功返回
     avatar_url = constants.QINIU_URL_DOMAIN + file_name
     return jsonify(errno=RET.OK, errmsg='保存成功', data={'avatar_url': avatar_url})
+
+
+# PUT /api/v1.0/users/name
+@api.route('/users/name', methods=['PUT'])
+@login_required
+def change_user_name():
+    """修改用户名"""
+    user_id = g.user_id
+
+    # 获取用户想要设置的用户名
+    req_data = request.get_json()
+    if not req_data:
+        return jsonify(errno=RET.PARAMERR, errmsg='参数不完整')
+
+    name = req_data.get('name')
+    try:
+        User.query.filter_by(id=user_id).update({'name': name})
+        db.session.commit()
+    except Exception as e:
+        current_app.logger.error(e)
+        db.session.rollback()
+        return jsonify(errno=RET.DBERR, errmsg='设置昵称失败')
+
+    session['name'] = name
+    return jsonify(errno=RET.OK, merrmsg='修改成功', data={'name': name})
+
+
+# GET /api/v1.0/user
+@api.route('/user', methods=['GET'])
+@login_required
+def get_user_profile():
+    """获取个人信息"""
+    user_id = g.user_id
+    try:
+        user = User.query.get(user_id)
+    except Exception as e:
+        current_app.logger.error(e)
+        return jsonify(errno=RET.DBERR, errmsg='获取用户信息失败')
+
+    if user is None:
+        return jsonify(errno=RET.NODATA, errmsg='无效操作')
+
+    return jsonify(errno=RET.OK, errmsg='查询成功', data=user.to_dict())
+
+#
