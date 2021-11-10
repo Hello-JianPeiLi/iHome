@@ -14,3 +14,5 @@ LOGIN_ERROR_MAX_TIMES = 5
 LOGIN_ERROR_FORBID_TIME = 300
 # 七牛对象存储域名
 QINIU_URL_DOMAIN = 'http://r2am6p7w9.hn-bkt.clouddn.com/'
+# 获取城区信息的缓存时间，单位：秒
+AREA_INFO_REDIS_CACHE_EXPIRES = 7200
