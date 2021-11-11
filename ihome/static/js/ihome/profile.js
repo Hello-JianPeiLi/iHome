@@ -63,7 +63,6 @@ $(document).ready(function () {
         success: function (resp) {
             console.log(resp.data.name);
             if (resp.errno == '0') {
-                ;
                 $('#user-name').val(resp.data.name);
                 $('#user-avatar').attr('src', resp.data.avatar);
             }

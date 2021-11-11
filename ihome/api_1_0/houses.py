@@ -51,7 +51,7 @@ def get_area_info():
 
 
 # POST /api/v1.0/houses/info
-@api.route('/houses/info')
+@api.route('/houses/info', methods=['POST'])
 @login_required
 def save_house_info():
     """
@@ -90,7 +90,6 @@ def save_house_info():
     deposit = house_dict.get('deposit')  # 押金
     min_days = house_dict.get('min_days')  # 最小入住天数
     max_days = house_dict.get('max_days')  # 最大入住天数
-    facility = house_dict.get('facility')
 
     # 校验参数
     if not all(
@@ -179,9 +178,11 @@ def save_house_image():
     参数 图片 房屋的id
     :return:
     """
-    image_file = request.form.get('house_iamge')
+    image_file = request.files.get('house_image')
     house_id = request.form.get('house_id')
 
+    current_app.logger.info(image_file)
+    current_app.logger.info(house_id)
     if not all([image_file, house_id]):
         return jsonify(errno=RET.PARAMERR, errmgs='参数错误')
 
