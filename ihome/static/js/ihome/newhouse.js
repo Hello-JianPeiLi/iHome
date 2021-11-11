@@ -10,10 +10,14 @@ $(document).ready(function () {
     $.get('/api/v1.0/areas', function (resp) {
         if (resp.errno == '0') {
             let areas = resp.data;
-            for (var i = 0; i < areas.length; i++) {
-                let area = areas[i];
-                $('#area-id').append("<option value="+area.aid+">"+area.aname+"</option>");
-            }
+            let html = template('areas-tmp', {areas: areas});
+            $('#area-id').html(html);
+            // for (var i = 0; i < areas.length; i++) {
+            //     let area = areas[i];
+            //     $('#area-id').append("<option value="+area.aid+">"+area.aname+"</option>");
+            // }
+        } else {
+            alert(resp.errmsg);
         }
 
     })
