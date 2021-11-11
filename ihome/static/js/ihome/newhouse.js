@@ -20,5 +20,6 @@ $(document).ready(function () {
             alert(resp.errmsg);
         }
 
-    })
+    }, 'json');
+
 })
