@@ -21,10 +21,10 @@ import traceback
 class CCP(object):
     """自己封装发送短信的辅助类"""
 
-    def send_template_sms(self, tid: str, mobile: str, datas: tuple):
+    def send_template_sms(self, tid: str, mobile: str, data: tuple):
         sdk = SmsSDK('8aaf07087ce03b67017ce47d42090083', '5cb49b26a6994b8a9410dd40226ef0c9',
                      '8aaf07087ce03b67017ce47d439b008a')
-        resp = json.loads(sdk.sendMessage(tid, mobile, datas))
+        resp = json.loads(sdk.sendMessage(tid, mobile, data))
         if resp['statusCode'] == '000000':
             print(resp)
             return 0

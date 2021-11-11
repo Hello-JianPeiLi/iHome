@@ -8,7 +8,7 @@ from ihome import redis_store, constants
 from flask import current_app, jsonify, make_response, request
 from ihome.utils.response_code import RET
 from ihome.models import User
-from ihome.libs.yuntongxun.ronglian_sms_sdk.SmsSDK import CCP
+from ihome.tasks.task_sms import send_sms
 
 
 # GET /api/v1.0/image_codes/<image_code_id>
@@ -109,13 +109,21 @@ def get_sms_code(mobile):
 
     # 发送短信
     info = (sms_code, int(constants.SMS_CODE_REDIS_EXPIRES / 60))
-    try:
-        ccp = CCP()
-        result = ccp.send_template_sms('1', mobile, info)
-    except Exception as e:
-        current_app.logger.error(e)
-        return jsonify(errno=RET.THIRDERR, errmsg='发送异常')
-    if result == 0:
-        return jsonify(errno=RET.OK, errmsg='发送成功')
-    else:
-        return jsonify(errno=RET.THIRDERR, errmsg='发送失败')
+
+    # 如下没有使用celery异步发送短信
+    # try:
+    #     ccp = CCP()
+    #     result = ccp.send_template_sms('1', mobile, info)
+    # except Exception as e:
+    #     current_app.logger.error(e)
+    #     return jsonify(errno=RET.THIRDERR, errmsg='发送异常')
+
+    # if result == 0:
+    #     return jsonify(errno=RET.OK, errmsg='发送成功')
+    # else:
+    #     return jsonify(errno=RET.THIRDERR, errmsg='发送失败')
+
+    # 使用celery异步发送短信
+    send_sms.delay('1', mobile, info)
+
+    return jsonify(errno=RET.OK, errmsg='发送成功')

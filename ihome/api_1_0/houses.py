@@ -221,3 +221,6 @@ def save_house_image():
         return jsonify(errno=RET.DBERR, errmsg='保存图片数据异常')
 
     return jsonify(errno=RET.OK, errmsg='OK', data={'image_url': file_name})
+
+
+
