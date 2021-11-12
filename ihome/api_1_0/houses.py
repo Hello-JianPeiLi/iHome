@@ -223,4 +223,23 @@ def save_house_image():
     return jsonify(errno=RET.OK, errmsg='OK', data={'image_url': file_name})
 
 
+# GET /api/v1.0/user/houses
+@api.route('/user/houses')
+@login_required
+def get_user_houses():
+    """获取房东发布房源的信息"""
+    user_id = g.user_id
+    current_app.logger.info('user_id==', user_id)
+    try:
+        user = User.query.get(user_id)
+        houses = user.houses
+    except Exception as e:
+        current_app.logger.error(e)
+        return jsonify(errno=RET.DBERR, errmsg='获取房源信息失败')
 
+    # 将查询到的房屋信息转换为字典存放到列表中
+    houses_list = []
+    if houses:
+        for house in houses:
+            houses_list.append(house.to_basic_dict())
+    return jsonify(errno=RET.OK, data=houses_list)
